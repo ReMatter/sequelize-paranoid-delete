@@ -8,6 +8,7 @@ sequelize-paranoid-delete enables onDelete when using paranoid mode in sequelize
 - Extrely easy to use
 - Database agnostic (in progress, working for MySQL now)
 - Integrates with Umzug and any othe library for running migrations with sequelize
+- CLI to generate triggers for existing database
 
 ## Use Cases:
 
@@ -121,7 +122,7 @@ yarn add sequelize-paranoid-delete
 
 ### Debug Tests
 
-`yarn node --inspect-brk ./node_modules/.bin/ts-mocha -p tsconfig.json src/**/*.test.ts`
+`yarn node --inspect-brk ./node_modules/.bin/ts-mocha -p lib.tsconfig.json src/**/*.test.ts`
 
 ## License
 
