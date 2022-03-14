@@ -1,0 +1,1 @@
+{"version":3,"file":"buildDropTriggerStatement.js","sourceRoot":"","sources":["../../../src/commands/helpers/buildDropTriggerStatement.ts"],"names":[],"mappings":"AAAA,OAAO,EAAE,gBAAgB,EAAE,MAAM,oBAAoB,CAAC;AAEtD,MAAM,CAAC,MAAM,yBAAyB,GAAG,CACvC,YAAoB,EACpB,YAAoB,EACZ,EAAE,CAAC,SAAS,CAAC;iBACN,gBAAgB,CAAC,YAAY,EAAE,YAAY,CAAC;CAC5D,CAAC"}

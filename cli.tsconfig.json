@@ -1,0 +1,9 @@
+{
+  "extends": "./tsconfig.json",
+  "compilerOptions": {
+    "module": "CommonJS",
+    "outDir": "bin"
+  },
+  "files": ["src/cli.ts"],
+  "exclude": ["node_modules"]
+}

@@ -1,0 +1,1 @@
+{"version":3,"file":"buildExistTriggerStatement.js","sourceRoot":"","sources":["../../../src/commands/helpers/buildExistTriggerStatement.ts"],"names":[],"mappings":"AAAA,OAAO,EAAE,gBAAgB,EAAE,MAAM,oBAAoB,CAAC;AAEtD,MAAM,CAAC,MAAM,0BAA0B,GAAG,CACxC,YAAoB,EACpB,YAAoB,EACZ,EAAE,CAAC,SAAS,CAAC;;;;;;;;8BAQO,YAAY;4BACd,gBAAgB,CAAC,YAAY,EAAE,YAAY,CAAC;;CAEvE,CAAC"}
