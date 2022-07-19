@@ -5,7 +5,7 @@ sequelize-paranoid-delete enables onDelete when using paranoid mode in sequelize
 ## Highlights
 
 - Written in TypeScript
-- Extrely easy to use
+- Extremely easy to use
 - Database agnostic (in progress, working for MySQL now)
 - Integrates with Umzug and any othe library for running migrations with sequelize
 - CLI to generate triggers for existing database
