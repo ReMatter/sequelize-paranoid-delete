@@ -1,17 +1,14 @@
 import { QueryInterface, QueryTypes } from 'sequelize';
-import { RenameColumnParameters } from '../types';
-import { buildCreateTriggerStatement } from './helpers/buildCreateTriggerStatement';
+import { RemoveColumnParameters } from '../types';
 import { buildDropTriggerStatement } from './helpers/buildDropTriggerStatement';
-import { getDependentColumnFromTriggerActionStatement } from './helpers/getDependentColumnFromTriggerActionStatement';
 import { getDependentTableFromTriggerActionStatement } from './helpers/getDependentTableFromTriggerActionStatement';
-import { getIndependentColumnFromTriggerActionStatement } from './helpers/getIndependentColumnFromTriggerActionStatement';
 import { getTriggersInformation } from './helpers/getTriggersInformation';
 import { unwrapSelectMany } from './helpers/unwrapSelect';
 
-export const RENAME_COLUMN_COMMAND_NAME = 'renameColumn';
+export const REMOVE_COLUMN_COMMAND_NAME = 'removeColumn';
 
-export const renameColumn = async (target: QueryInterface, parameters: RenameColumnParameters) => {
-  const [tableName, _oldColumnName, newColumnName] = parameters;
+export const removeColumn = async (target: QueryInterface, parameters: RemoveColumnParameters) => {
+  const [tableName] = parameters;
 
   const triggersActionStatementsPointingToTable = unwrapSelectMany(
     await target.sequelize.query(
@@ -20,7 +17,7 @@ export const renameColumn = async (target: QueryInterface, parameters: RenameCol
         tableName as string,
       ),
       { type: QueryTypes.SELECT }
-    )) as {EVENT_OBJECT_TABLE: string; ACTION_STATEMENT: string}[];
+    )) as {EVENT_OBJECT_TABLE: string}[];
 
 
   const triggersActionStatementsPointedToTable = unwrapSelectMany(
@@ -32,9 +29,8 @@ export const renameColumn = async (target: QueryInterface, parameters: RenameCol
       { type: QueryTypes.SELECT }
       )) as {ACTION_STATEMENT: string}[];
 
-
   const commandResult = await Reflect.apply(
-    (target as Record<string, any>)[RENAME_COLUMN_COMMAND_NAME],
+    (target as Record<string, any>)[REMOVE_COLUMN_COMMAND_NAME],
     target,
     parameters,
   );
@@ -46,19 +42,6 @@ export const renameColumn = async (target: QueryInterface, parameters: RenameCol
         target.sequelize.query(buildDropTriggerStatement(EVENT_OBJECT_TABLE, tableName as string))
       ),
     );
-
-    await Promise.all(
-      triggersActionStatementsPointingToTable.map(({ EVENT_OBJECT_TABLE, ACTION_STATEMENT }) =>
-        target.sequelize.query(
-          buildCreateTriggerStatement(
-            EVENT_OBJECT_TABLE,
-            getIndependentColumnFromTriggerActionStatement(ACTION_STATEMENT),
-            tableName as string,
-            newColumnName,
-          ),
-        ),
-      ),
-    );
   }
 
   // acting as a independent table implementation
@@ -66,19 +49,6 @@ export const renameColumn = async (target: QueryInterface, parameters: RenameCol
     await Promise.all(
       triggersActionStatementsPointedToTable.map(({ ACTION_STATEMENT }) =>
         target.sequelize.query(buildDropTriggerStatement(tableName as string, getDependentTableFromTriggerActionStatement(ACTION_STATEMENT)))
-      ),
-    );
-
-    await Promise.all(
-      triggersActionStatementsPointedToTable.map(({ ACTION_STATEMENT }) =>
-        target.sequelize.query(
-          buildCreateTriggerStatement(
-            tableName as string,
-            newColumnName,
-            getDependentTableFromTriggerActionStatement(ACTION_STATEMENT),
-            getDependentColumnFromTriggerActionStatement(ACTION_STATEMENT),
-          ),
-        ),
       ),
     );
   }

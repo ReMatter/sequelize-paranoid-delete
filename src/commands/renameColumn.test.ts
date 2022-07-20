@@ -4,8 +4,8 @@ import * as Support from '../../test/support';
 import { queryInterfaceDecorator } from '../index';
 import { QueryInterface, DataTypes, QueryTypes } from 'sequelize';
 import { buildExistTriggerStatement } from './helpers/buildExistTriggerStatement';
-import { unwrapSelectOneValue } from './helpers/unwrapSelectOneValue';
-import { getTriggerActionStatement } from './helpers/testing/getTriggerActionStatement';
+import { unwrapSelectOneValue } from './helpers/unwrapSelect';
+import { getTriggersInformation } from './helpers/getTriggersInformation';
 
 describe(Support.getTestDialectTeaser('renameColumn'), () => {
   let queryInterface: QueryInterface;
@@ -58,7 +58,7 @@ describe(Support.getTestDialectTeaser('renameColumn'), () => {
       }),
     );
     const actionStatement = unwrapSelectOneValue(
-      await queryInterface.sequelize.query(getTriggerActionStatement('a', 'b'), {
+      await queryInterface.sequelize.query(getTriggersInformation('a', 'b'), {
         type: QueryTypes.SELECT,
       }),
     );
@@ -66,12 +66,9 @@ describe(Support.getTestDialectTeaser('renameColumn'), () => {
     expect(actionStatement).to.contain(`WHERE \`b\`.\`z_id\` = \`NEW\`.\`a_id\`;`);
   });
 
-  it.skip('supports renaming an independent table column', async function () {
-    // functionality is implemented but cannot be tested because it is not possible
-    // to set ALGORITHM=INPLACE when renaming a column
-    // see https://github.com/sequelize/sequelize/issues/10653
-    // without that, the following error appears:
-    // 'ALGORITHM=COPY is not supported. Reason: Columns participating in a foreign key are renamed. Try ALGORITHM=INPLACE.'
+  it('supports renaming an independent table column', async function () {
+    // need to remove foreign key constraint first
+    await queryInterface.removeConstraint('b', 'b_ibfk_1');
 
     await queryInterface.renameColumn('a', 'a_id', 'z_id');
     const triggerStillExists = !!unwrapSelectOneValue(
@@ -80,7 +77,7 @@ describe(Support.getTestDialectTeaser('renameColumn'), () => {
       }),
     );
     const actionStatement = unwrapSelectOneValue(
-      await queryInterface.sequelize.query(getTriggerActionStatement('a', 'b'), {
+      await queryInterface.sequelize.query(getTriggersInformation('a', 'b'), {
         type: QueryTypes.SELECT,
       }),
     );

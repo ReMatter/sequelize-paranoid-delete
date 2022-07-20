@@ -1,6 +1,6 @@
 {
   "name": "sequelize-paranoid-delete",
-  "version": "0.2.0",
+  "version": "0.4.0",
   "description": "sequelize-paranoid-delete enables onDelete when using paranoid mode",
   "bugs": {
     "url": "https://github.com/nicoabie/sequelize-paranoid-delete/issues"
